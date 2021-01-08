@@ -3,9 +3,9 @@ import typeDefs from "./client.schema";
 
 const cache = new InMemoryCache({
   typePolicies: {
-    ThemeObject: {
+    Query: {
       fields: {
-        type: {}
+        getTheme: 
       }
     }
   }

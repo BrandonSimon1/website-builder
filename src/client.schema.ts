@@ -6,7 +6,7 @@ import { gql } from "@apollo/client";
 // }
 export default gql`
   union Container = GridContainer | ContentContainer
-  union Field = TextField
+  union Field = TextField | ImageField
   union ThemeObject = Container | Field
 
   enum ThemeObjectType {
@@ -18,7 +18,8 @@ export default gql`
   type GridContainer {
     id: ID!
     type: ThemeObjectType!
-    style: GridContainerStyle!
+    gridPosition: GridPosition!
+    background: String!
     href: String
     children: [ThemeObject]!
   }
@@ -33,12 +34,14 @@ export default gql`
   type ContentContainer {
     id: ID!
     type: ThemeObjectType!
-    style: ContentContainerStyle!
+    contentOrientation: ContentOrientation!
+    gridPosition: GridPosition!
+    background: String!
     href: String
     children: [Field]!
   }
 
-  type ContentContainerStyle {
+  type ContentOrientation {
     flexDirection: String!
     justifyContent: String!
     alignItems: String!
@@ -47,18 +50,27 @@ export default gql`
   type TextField {
     id: ID!
     type: ThemeObjectType!
-    style: TextFieldStyle!
+    textStyle: TextStyle!
     href: String
     text: String!
   }
 
-  type TextFieldStyle {
+  type ImageField {
+    id: ID!
+    type: ThemeObjectType!
+    href: String
+    src: String!
+  }
+
+  type TextStyle {
     fontFamily: String!
     fontWeight: String!
+    color: String!
+    textAlign: String!
   }
 
   type Query {
-    getTheme: ThemeObject
+    getTheme: [ThemeObject]
   }
 
   type Mutation {
