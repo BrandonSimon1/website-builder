@@ -31,11 +31,24 @@ const contentContainerBaseStyles = {
 // styles like background, border, grid position,
 const ContentContainer = LinkOrDiv(contentContainerBaseStyles);
 
-const textFieldBaseStyles = {
-  display: "block"
-};
+const textFieldBaseStyles = {};
 
 const TextField = LinkOrDiv(textFieldBaseStyles);
+
+const themeObjectTypes = {
+  GridContainer,
+  ContentContainer,
+  TextField
+};
+
+function renderTree(flatTree) {
+  const top = flatTree.find((o) => !o.parent);
+  return (function r(nested) {
+    const C = themeObjectTypes[nested.type];
+    const children = flatTree.filter((o) => o.parent == nested.id);
+    return <C>{children.map(r)}</C>;
+  })({ ...top });
+}
 
 function App() {
   const { loading, error, data } = useQuery(GetTheme);

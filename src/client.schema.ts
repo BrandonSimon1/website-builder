@@ -13,6 +13,7 @@ export default gql`
     GridContainer
     ContentContainer
     TextField
+    ImageField
   }
 
   type GridContainer {
@@ -21,7 +22,7 @@ export default gql`
     gridPosition: GridPosition!
     background: String!
     href: String
-    children: [ThemeObject]!
+    parent: Container
   }
 
   type GridPosition {
@@ -38,7 +39,7 @@ export default gql`
     gridPosition: GridPosition!
     background: String!
     href: String
-    children: [Field]!
+    parent: Container!
   }
 
   type ContentOrientation {
@@ -53,6 +54,7 @@ export default gql`
     textStyle: TextStyle!
     href: String
     text: String!
+    parent: Container!
   }
 
   type ImageField {
@@ -60,6 +62,7 @@ export default gql`
     type: ThemeObjectType!
     href: String
     src: String!
+    parent: Container!
   }
 
   type TextStyle {
