@@ -1,18 +1,11 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import typeDefs from "./client.schema";
+import { typeDefs, resolvers } from "./client.schema";
 
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        getTheme() {}
-      }
-    }
-  }
-});
+const cache = new InMemoryCache({});
 
 export default new ApolloClient({
-  uri: process.env.GRAPQHL_ENDPOINT,
+  // uri: process.env.GRAPQHL_ENDPOINT,
   cache,
-  typeDefs
+  typeDefs,
+  resolvers
 });

@@ -1,10 +1,15 @@
 import { gql } from "@apollo/client";
-// interface ThemeObject {
-//   type: string
-//   style: json
-//   children: ThemeObject[]
-// }
-export default gql`
+import fakeTheme from "./fake-theme";
+
+export const resolvers = {
+  Query: {
+    getTheme() {
+      return fakeTheme;
+    }
+  }
+};
+
+export const typeDefs = gql`
   union Container = GridContainer | ContentContainer
   union Field = TextField | ImageField
   union ThemeObject = Container | Field

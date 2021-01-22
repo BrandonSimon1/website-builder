@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import { useQuery, useMutation } from "@apollo/client";
 import GetTheme from "./GetTheme.query";
-import UpdateThemeObject from "./UpdateThemeObject.mutation";
+// import UpdateThemeObject from "./UpdateThemeObject.mutation";
 
 const LinkOrDiv = (baseStyle) => ({ href, children, style, ...props }) =>
   href ? (
@@ -45,16 +45,22 @@ function renderTree(flatTree) {
   const top = flatTree.find((o) => !o.parent);
   return (function r(nested) {
     const C = themeObjectTypes[nested.type];
-    const children = flatTree.filter((o) => o.parent == nested.id);
+    const children = flatTree.filter((o) => o?.parent.id == nested.id);
     return <C>{children.map(r)}</C>;
-  })({ ...top });
+  })(top);
 }
 
 function App() {
   const { loading, error, data } = useQuery(GetTheme);
-  const [updateThemeObject] = useMutation(UpdateThemeObject);
-
-  return <div>Hello</div>;
+  // const [updateThemeObject] = useMutation(UpdateThemeObject);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error {error}</p>;
+  console.log(data);
+  return (
+    <GridContainer style={{ width: "100vw", height: "100vh" }}>
+      {renderTree(data?.getTheme ?? [])}
+    </GridContainer>
+  );
 }
 
 export default App;
