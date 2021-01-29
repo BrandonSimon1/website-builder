@@ -45,7 +45,9 @@ function renderTree(flatTree) {
   const top = flatTree.find((o) => !o.parent);
   return (function r(nested) {
     const C = themeObjectTypes[nested.type];
-    const children = flatTree.filter((o) => o?.parent.id == nested.id);
+    const children = flatTree.filter(
+      (o) => o.parent && o.parent.id == nested.id
+    );
     return <C>{children.map(r)}</C>;
   })(top);
 }
@@ -55,7 +57,7 @@ function App() {
   // const [updateThemeObject] = useMutation(UpdateThemeObject);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error {error}</p>;
-  console.log(data);
+  console.log(data, "data");
   return (
     <GridContainer style={{ width: "100vw", height: "100vh" }}>
       {renderTree(data?.getTheme ?? [])}

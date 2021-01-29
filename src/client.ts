@@ -4,8 +4,6 @@ import { typeDefs, resolvers } from "./client.schema";
 const cache = new InMemoryCache({});
 
 export default new ApolloClient({
-  // uri: process.env.GRAPQHL_ENDPOINT,
-  cache,
-  typeDefs,
-  resolvers
+  uri: "https://v4mg9.sse.codesandbox.io/",
+  cache
 });

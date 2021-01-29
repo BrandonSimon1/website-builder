@@ -2,6 +2,46 @@ import { gql } from "@apollo/client";
 import fakeTheme from "./fake-theme";
 
 export const resolvers = {
+  ThemeObject: {
+    __resolveType(o) {
+      switch (o.type) {
+        case "GridContainer":
+          return "GridContainer";
+        case "ContentContainer":
+          return "ContentContainer";
+        case "TextField":
+          return "TextField";
+        case "ImageField":
+          return "ImageField";
+        default:
+          return;
+      }
+    }
+  },
+  Container: {
+    __resolveType(o) {
+      switch (o.type) {
+        case "GridContainer":
+          return "GridContainer";
+        case "ContentContainer":
+          return "ContentContainer";
+        default:
+          return;
+      }
+    }
+  },
+  Field: {
+    __resolveType(o) {
+      switch (o.type) {
+        case "TextField":
+          return "TextField";
+        case "ImageField":
+          return "ImageField";
+        default:
+          return;
+      }
+    }
+  },
   Query: {
     getTheme() {
       return fakeTheme;
@@ -12,7 +52,7 @@ export const resolvers = {
 export const typeDefs = gql`
   union Container = GridContainer | ContentContainer
   union Field = TextField | ImageField
-  union ThemeObject = Container | Field
+  union ThemeObject = GridContainer | ContentContainer | TextField | ImageField
 
   enum ThemeObjectType {
     GridContainer
@@ -44,7 +84,7 @@ export const typeDefs = gql`
     gridPosition: GridPosition!
     background: String!
     href: String
-    parent: Container!
+    parent: Container
   }
 
   type ContentOrientation {
@@ -59,7 +99,7 @@ export const typeDefs = gql`
     textStyle: TextStyle!
     href: String
     text: String!
-    parent: Container!
+    parent: Container
   }
 
   type ImageField {
@@ -67,7 +107,7 @@ export const typeDefs = gql`
     type: ThemeObjectType!
     href: String
     src: String!
-    parent: Container!
+    parent: Container
   }
 
   type TextStyle {

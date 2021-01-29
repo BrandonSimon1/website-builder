@@ -12,6 +12,7 @@
     "@types/react": "17.0.0",
     "@types/react-dom": "^16.9.8",
     "@vanilla-jsx/jsx-runtime": "1.5.3",
+    "graph-q": "1.1.1",
     "graphql": "^15.4.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
