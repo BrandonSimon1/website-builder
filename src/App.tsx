@@ -41,28 +41,79 @@ const themeObjectTypes = {
   TextField
 };
 
-function renderTree(flatTree) {
+function Tree({ flatTree }) {
   const top = flatTree.find((o) => !o.parent);
-  return (function r(nested) {
+  function R({ nested, extraStyles }) {
     const C = themeObjectTypes[nested.type];
     const children = flatTree.filter(
       (o) => o.parent && o.parent.id == nested.id
     );
-    return <C>{children.map(r)}</C>;
-  })(top);
+    if (nested.type == "GridContainer") {
+      const style = {
+        ...nested.gridPosition,
+        background: nested.background,
+        ...extraStyles
+      };
+      return (
+        <C {...{ style }} href={nested.href}>
+          {children.map((c) => (
+            <R key={c.id} nested={c} />
+          ))}
+        </C>
+      );
+    } else if (nested.type == "ContentContainer") {
+      const style = {
+        ...nested.contentOrientation,
+        background: nested.background,
+        ...extraStyles
+      };
+      return (
+        <C {...{ style }} href={nested.href}>
+          {children.map((c) => (
+            <R key={c.id} nested={c} />
+          ))}
+        </C>
+      );
+    } else if (nested.type == "TextField") {
+      const style = {
+        ...nested.textStyle,
+        ...extraStyles
+      };
+      return (
+        <C {...{ style }} href={nested.href}>
+          {children.map((c) => (
+            <R key={c.id} nested={c} />
+          ))}
+        </C>
+      );
+    } else if (nested.type == "ImageField") {
+      const style = {
+        ...extraStyles
+      };
+      return (
+        <C {...{ style }} href={nested.href} src={nested.src}>
+          {children.map((c) => (
+            <R key={c.id} nested={c} />
+          ))}
+        </C>
+      );
+    } else {
+      return null;
+    }
+  }
+  return (
+    <R nested={top} extraStyles={{ minHeight: "100vh", width: "100vw" }} />
+  );
 }
 
 function App() {
   const { loading, error, data } = useQuery(GetTheme);
   // const [updateThemeObject] = useMutation(UpdateThemeObject);
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error {error}</p>;
-  console.log(data, "data");
-  return (
-    <GridContainer style={{ width: "100vw", height: "100vh" }}>
-      {renderTree(data?.getTheme ?? [])}
-    </GridContainer>
-  );
+  if (error) return <p>Error: {error}</p>;
+
+  console.log("data", data);
+  return <Tree flatTree={data?.getTheme ?? []} />;
 }
 
 export default App;
