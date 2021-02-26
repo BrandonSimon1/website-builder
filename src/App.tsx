@@ -6,11 +6,11 @@ import GetTheme from "./GetTheme.query";
 
 const LinkOrDiv = (baseStyle) => ({ href, children, style, ...props }) =>
   href ? (
-    <a style={{ ...baseStyle, style }} {...props} href={href}>
+    <a style={{ ...baseStyle, ...style }} {...props} href={href}>
       {children}
     </a>
   ) : (
-    <div style={{ ...baseStyle, style }} {...props}>
+    <div style={{ ...baseStyle, ...style }} {...props}>
       {children}
     </div>
   );
@@ -18,7 +18,7 @@ const LinkOrDiv = (baseStyle) => ({ href, children, style, ...props }) =>
 const gridContainerBaseStyles = {
   display: "grid",
   gridTemplateColumns: "repeat(12, 1fr)",
-  gridAutoRows: "10vh"
+  gridAutoRows: "10%"
 };
 
 // styles like background and its own grid position if nested
@@ -42,8 +42,8 @@ const themeObjectTypes = {
 };
 
 function Tree({ flatTree }) {
-  const top = flatTree.find((o) => !o.parent);
-  function R({ nested, extraStyles }) {
+  const highest = flatTree.filter((o) => !o.parent);
+  function R({ nested }) {
     const C = themeObjectTypes[nested.type];
     const children = flatTree.filter(
       (o) => o.parent && o.parent.id == nested.id
@@ -51,8 +51,7 @@ function Tree({ flatTree }) {
     if (nested.type == "GridContainer") {
       const style = {
         ...nested.gridPosition,
-        background: nested.background,
-        ...extraStyles
+        background: nested.background
       };
       return (
         <C {...{ style }} href={nested.href}>
@@ -64,8 +63,7 @@ function Tree({ flatTree }) {
     } else if (nested.type == "ContentContainer") {
       const style = {
         ...nested.contentOrientation,
-        background: nested.background,
-        ...extraStyles
+        background: nested.background
       };
       return (
         <C {...{ style }} href={nested.href}>
@@ -76,8 +74,7 @@ function Tree({ flatTree }) {
       );
     } else if (nested.type == "TextField") {
       const style = {
-        ...nested.textStyle,
-        ...extraStyles
+        ...nested.textStyle
       };
       return (
         <C {...{ style }} href={nested.href}>
@@ -87,9 +84,7 @@ function Tree({ flatTree }) {
         </C>
       );
     } else if (nested.type == "ImageField") {
-      const style = {
-        ...extraStyles
-      };
+      const style = {};
       return (
         <C {...{ style }} href={nested.href} src={nested.src}>
           {children.map((c) => (
@@ -102,7 +97,11 @@ function Tree({ flatTree }) {
     }
   }
   return (
-    <R nested={top} extraStyles={{ minHeight: "100vh", width: "100vw" }} />
+    <GridContainer style={{ minHeight: "100vh", minWidth: "100vw" }}>
+      {highest.map((c) => (
+        <R nested={c} key={c.id} />
+      ))}
+    </GridContainer>
   );
 }
 
