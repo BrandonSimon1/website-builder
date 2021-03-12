@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Tree({ flatTree, themeObjectTypes }) {
+export function Tree({ flatTree, themeObjectTypes, Container }) {
   const highest = flatTree.filter((o) => !o.parent);
   function R({ nested }) {
     const C = themeObjectTypes[nested.type];
@@ -50,12 +50,11 @@ export function Tree({ flatTree, themeObjectTypes }) {
       return null;
     }
   }
-  const { GridContainer } = themeObjectTypes;
   return (
-    <GridContainer style={{ minHeight: "100vh", minWidth: "100vw" }}>
+    <Container style={{ minHeight: "100vh", minWidth: "100vw" }}>
       {highest.map((c) => (
         <R nested={c} key={c.id} />
       ))}
-    </GridContainer>
+    </Container>
   );
 }

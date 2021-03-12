@@ -1,13 +1,13 @@
 import React from "react";
 import "./App.css";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import GetTheme from "./GetTheme.query";
-import { themeObjectTypes } from "./BaseComponents";
+import { editorThemeObjectTypes, EditorContainer } from "./EditorComponents";
 import { Tree } from "./Tree";
 
-function App() {
+function Editor() {
   const { loading, error, data } = useQuery(GetTheme);
-
+  // const [updateThemeObject] = useMutation(UpdateThemeObject);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -16,10 +16,10 @@ function App() {
   return (
     <Tree
       flatTree={data?.getTheme ?? []}
-      themeObjectTypes={themeObjectTypes}
-      Container={themeObjectTypes.GridContainer}
+      themeObjectTypes={editorThemeObjectTypes}
+      Container={EditorContainer}
     />
   );
 }
 
-export default App;
+export default Editor;

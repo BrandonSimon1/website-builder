@@ -1,6 +1,11 @@
 import React from "react";
 
-const LinkOrDiv = (baseStyle) => ({ href, children, style, ...props }) =>
+const LinkOrDiv = (baseStyle: any) => ({
+  href,
+  children,
+  style,
+  ...props
+}: any) =>
   href ? (
     <a style={{ ...baseStyle, ...style }} {...props} href={href}>
       {children}
@@ -31,7 +36,7 @@ const textFieldBaseStyles = {};
 
 const TextField = LinkOrDiv(textFieldBaseStyles);
 
-export const themeObjectTypes = {
+export const themeObjectTypes: { [type: string]: React.FC<any> } = {
   GridContainer,
   ContentContainer,
   TextField
