@@ -14,11 +14,7 @@ function App() {
   console.log("data", data);
 
   return (
-    <Tree
-      flatTree={data?.getTheme ?? []}
-      themeObjectTypes={themeObjectTypes}
-      Container={themeObjectTypes.GridContainer}
-    />
+    <Tree flatTree={data?.getTheme ?? []} themeObjectTypes={themeObjectTypes} />
   );
 }
 

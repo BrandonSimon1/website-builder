@@ -2,8 +2,10 @@ import React from "react";
 import "./App.css";
 import { useQuery, useMutation } from "@apollo/client";
 import GetTheme from "./GetTheme.query";
-import { editorThemeObjectTypes, EditorContainer } from "./EditorComponents";
+import { editorThemeObjectTypes } from "./EditorComponents";
 import { Tree } from "./Tree";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
 
 function Editor() {
   const { loading, error, data } = useQuery(GetTheme);
@@ -14,11 +16,12 @@ function Editor() {
   console.log("data", data);
 
   return (
-    <Tree
-      flatTree={data?.getTheme ?? []}
-      themeObjectTypes={editorThemeObjectTypes}
-      Container={EditorContainer}
-    />
+    <DndProvider backend={HTML5Backend}>
+      <Tree
+        flatTree={data?.getTheme ?? []}
+        themeObjectTypes={editorThemeObjectTypes}
+      />
+    </DndProvider>
   );
 }
 

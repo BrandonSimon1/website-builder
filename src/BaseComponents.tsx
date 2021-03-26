@@ -1,25 +1,23 @@
 import React from "react";
+import { GRIDSIZE } from "./constants";
 
-const LinkOrDiv = (baseStyle: any) => ({
-  href,
-  children,
-  style,
-  ...props
-}: any) =>
-  href ? (
-    <a style={{ ...baseStyle, ...style }} {...props} href={href}>
-      {children}
-    </a>
-  ) : (
-    <div style={{ ...baseStyle, ...style }} {...props}>
-      {children}
-    </div>
+const LinkOrDiv = (baseStyle: any) =>
+  React.forwardRef(({ href, children, style, ...props }: any, ref) =>
+    href ? (
+      <a style={{ ...baseStyle, ...style }} {...props} ref={ref} href={href}>
+        {children}
+      </a>
+    ) : (
+      <div style={{ ...baseStyle, ...style }} ref={ref} {...props}>
+        {children}
+      </div>
+    )
   );
 
 const gridContainerBaseStyles = {
   display: "grid",
-  gridTemplateColumns: "repeat(12, 1fr)",
-  gridAutoRows: "10%"
+  gridTemplateColumns: `repeat(${GRIDSIZE}, 1fr)`,
+  gridAutoRows: `repeat(${GRIDSIZE}, 1fr)`
 };
 
 // styles like background and its own grid position if nested
