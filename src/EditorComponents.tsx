@@ -2,8 +2,8 @@ import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { themeObjectTypes } from "./BaseComponents";
 import { GRIDSIZE } from "./constants";
-
-const accept = ["GridContainer", "ContentContainer", "TextField", "ImageField"];
+import client from "./client";
+import GetTheme from "./GetTheme.query";
 
 interface Point {
   x: number;
@@ -14,16 +14,15 @@ interface Rect extends Point {
   width: number;
   height: number;
 }
-interface GridStart {
-  gridColumnStart: number;
-  gridRowStart: number;
-}
+
 interface GridPosition {
   gridColumnStart: number;
   gridColumnEnd: number;
   gridRowStart: number;
   gridRowEnd: number;
 }
+
+type GridStart = Pick<GridPosition, "gridRowStart" | "gridColumnStart">;
 
 const pointAdd = ({ x: x1, y: y1 }: Point, { x: x2, y: y2 }: Point): Point => ({
   x: x2 + x1,
@@ -63,43 +62,59 @@ const getNewGridPosition = (
   }
 };
 
-const GridContainer = ({ style: oldStyle, ...props }: any) => {
+const GridContainer = ({ style, ...props }: any) => {
   const { GridContainer } = themeObjectTypes;
-  const [{ isDragging }, drag, preview] = useDrag(() => ({
+  const accept = [
+    "GridContainer",
+    "ContentContainer",
+    "TextField",
+    "ImageField"
+  ];
+  const [{ isDragging, offset }, drag, preview] = useDrag(() => ({
     item: { type: "GridContainer", id: props.id, style: props.style },
-    collect: (monitor) => ({ isDragging: monitor.isDragging() })
-  }));
-  const [{ isOver, offset }, drop] = useDrop(() => ({
-    accept,
     collect: (monitor) => ({
-      isOver: monitor.isOver({ shallow: true }),
+      isDragging: monitor.isDragging(),
       offset: monitor.getSourceClientOffset()
     })
   }));
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept,
+    collect: (monitor) => ({
+      isOver: monitor.isOver({ shallow: true })
+    }),
+    drop(item, monitor) {
+      client.writeQuery({
+        query: GetTheme,
+        data: {
+          // Contains the data to write
+          getTheme: {
+            __typename: item.type,
+            id: item.id
+          }
+        },
+        variables: {
+          id: 5
+        }
+      });
+    }
+  }));
+  const elementRef: { current?: HTMLElement } = {};
   const dragDropRef = (el: HTMLElement) => {
     drag(el);
     drop(el);
+    elementRef.current = el;
   };
-  if (isDragging) {
-    return <GridContainer ref={preview} {...props} style={oldStyle} />;
+  if (isDragging && elementRef.current && offset) {
+    return <GridContainer ref={preview} {...props} style={style} />;
   } else if (isOver) {
-    const dropRectRef: { current?: HTMLElement } = {};
-    const dropRef = (el: HTMLElement) => {
-      drop(el);
-      dropRectRef.current = el;
+    const dropRect: Rect = elementRef.current.getBoundingClientRect();
+    const newStyle = {
+      ...style,
+      ...getNewGridPosition(style, getNewGridStart(offset, dropRect))
     };
-    if (dropRectRef.current && offset) {
-      const dropRect: Rect = dropRectRef.current.getBoundingClientRect();
-      const newStyle = {
-        ...oldStyle,
-        ...getNewGridPosition(oldStyle, getNewGridStart(offset, dropRect))
-      };
-      return <GridContainer ref={dropRef} {...props} style={newStyle} />;
-    } else {
-      return <GridContainer ref={dropRef} {...props} style={oldStyle} />;
-    }
+    return <GridContainer ref={dragDropRef} {...props} style={style} />;
   } else {
-    return <GridContainer ref={dragDropRef} {...props} style={oldStyle} />;
+    return <GridContainer ref={dragDropRef} {...props} style={style} />;
   }
 };
 
